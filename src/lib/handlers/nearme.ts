@@ -1,5 +1,4 @@
-import { FreeFloatingVehicle } from '../../dtos/free';
-import { StationInformation, StationStatus } from '../../dtos/station';
+import { getNearbySnapshot } from '../functions/getNearbySnapshot';
 
 export async function handleNearMe(request: Request): Promise<Response> {
 	const url = new URL(request.url);
@@ -10,80 +9,11 @@ export async function handleNearMe(request: Request): Promise<Response> {
 		return jsonResponse({ error: 'Missing or invalid lat/lon query params' }, 400);
 	}
 
-	const infoUrl = 'https://beryl-gbfs-production.web.app/v2_2/Norwich/station_information.json';
-	const statusUrl = 'https://beryl-gbfs-production.web.app/v2_2/Norwich/station_status.json';
-	const freeBikesUrl = 'https://beryl-gbfs-production.web.app/v2_2/Norwich/free_bike_status.json';
-
 	try {
-		const [infoRes, statusRes, freeBikeRes] = await Promise.all([fetch(infoUrl), fetch(statusUrl), fetch(freeBikesUrl)]);
-
-		const infoData = await infoRes.json();
-		const statusData = await statusRes.json();
-		const freeBikeData = await freeBikeRes.json();
-
-		const stations: StationInformation[] = infoData.data.stations;
-		const statuses: StationStatus[] = statusData.data.stations;
-
-		// Closest stations within 0.75 miles (~1207 meters), top 5
-		const stationsWithStatus = stations
-			.map((station) => {
-				const distance = haversineDistance(lat, lon, station.lat, station.lon);
-				if (distance > 800) return null;
-
-				const status = statuses.find((s) => s.station_id === station.station_id);
-				if (!status) return null;
-
-				const vehicleTypes = status.vehicle_types_available || [];
-				let numberOfAvailableVehicles = 0;
-				let numberOfBikes = 0;
-				let numberOfEBikes = 0;
-				let numberOfScooters = 0;
-				for (const vt of vehicleTypes) {
-					numberOfAvailableVehicles += vt.count || 0;
-					if (vt.vehicle_type_id === 'beryl_bike') numberOfBikes = vt.count || 0;
-					if (vt.vehicle_type_id === 'bbe') numberOfEBikes = vt.count || 0;
-					if (vt.vehicle_type_id === 'scooter') numberOfScooters = vt.count || 0;
-				}
-
-				return {
-					name: station.name,
-					lat: station.lat,
-					lon: station.lon,
-					distance,
-					numberOfAvailableVehicles,
-					numberOfBikes,
-					numberOfEBikes,
-					numberOfScooters,
-				};
-			})
-			.filter(Boolean)
-			.sort((a, b) => a!.distance - b!.distance)
-			.slice(0, 5);
-
-		// Closest free-floating vehicles within 1 mile (~1609 meters), top 5
-		const vehicles: FreeFloatingVehicle[] = freeBikeData.data.bikes
-			.map((bike: any) => {
-				const distance = haversineDistance(lat, lon, bike.lat, bike.lon);
-				if (distance > 1207.1) return null;
-
-				return {
-					bike_id: bike.bike_id,
-					is_reserved: bike.is_reserved,
-					is_disabled: bike.is_disabled,
-					vehicle_type_id: bike.vehicle_type_id,
-					lat: bike.lat,
-					lon: bike.lon,
-					current_range_meters: bike.current_range_meters ?? 0,
-					distance,
-				};
-			})
-			.filter(Boolean)
-			.sort((a: FreeFloatingVehicle, b: FreeFloatingVehicle) => a.distance - b.distance)
-			.slice(0, 5) as FreeFloatingVehicle[];
-
+		const { nearby_stations, nearby_free_vehicles } = await getNearbySnapshot(lat, lon);
 		return jsonResponse({
-			nearby_stations: stationsWithStatus,
-			nearby_free_vehicles: vehicles,
+			nearby_stations,
+			nearby_free_vehicles,
 		});
 	} catch (err) {
 		return jsonResponse({ error: 'Failed to fetch GBFS data' }, 500);

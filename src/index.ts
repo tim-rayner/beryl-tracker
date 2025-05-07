@@ -1,7 +1,12 @@
 import { StationStatus } from './dtos/station';
 import { handleNearMe } from './lib/handlers/nearme';
+import { sendSummaryEmail } from './lib/handlers/sendSummaryEmail';
 
 export default {
+	async scheduled(controller, env, ctx) {
+		await sendSummaryEmail(env, 52.6416, 1.30084);
+	},
+
 	async fetch(request: Request, env: Env, ctx: ExecutionContext) {
 		const url = new URL(request.url);
 		const path = url.pathname;
@@ -31,6 +36,12 @@ export default {
 		// nearme?lat=52.64163&lon=1.30084
 		if (path === '/nearme' || path === '/nearme/') {
 			return handleNearMe(request);
+		}
+
+		// testing emailer
+		if (url.pathname === '/test-email') {
+			await sendSummaryEmail(env, 52.6416, 1.30084);
+			return new Response('Test email sent');
 		}
 
 		if (path === '/' || path === '') {
