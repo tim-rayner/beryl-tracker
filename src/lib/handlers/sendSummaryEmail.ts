@@ -1,4 +1,5 @@
 //https://beryl-tracker-gbfs.beryl-tracker-gbfs.workers.dev/
+import { FreeFloatingVehicle, NearbyVehicles, StationWithStatus } from '../../dtos/free';
 import { getNearbySnapshot } from '../functions/getNearbySnapshot';
 
 export async function sendSummaryEmail(env: Env, lat: number, lon: number): Promise<void> {
@@ -12,7 +13,6 @@ export async function sendSummaryEmail(env: Env, lat: number, lon: number): Prom
 	}
 
 	const html = formatEmail(data);
-	console.log('RESEND key exists?', Boolean(env.RESEND_API_KEY));
 
 	try {
 		const res = await fetch('https://api.resend.com/emails', {
@@ -42,12 +42,34 @@ export async function sendSummaryEmail(env: Env, lat: number, lon: number): Prom
 	}
 }
 
-function formatEmail(data: any): string {
+const formatVehicleName = (vehicle: FreeFloatingVehicle) => {
+	if (vehicle.vehicle_type_id === 'bbe') {
+		return 'Electric Bike';
+	}
+
+	if (vehicle.vehicle_type_id === 'bb') {
+		return 'Bike';
+	}
+
+	if (vehicle.vehicle_type_id === 'scooter') {
+		return 'Scooter';
+	}
+
+	return 'Unknown';
+};
+
+const metersToMiles = (meters: number) => {
+	return (meters * 0.000621371).toFixed(2);
+};
+
+function formatEmail(data: NearbyVehicles): string {
 	const stations = data.nearby_stations
-		.map((s: any) => `<li><strong>${s.name}</strong>: ${s.numberOfBikes} bikes, ${s.numberOfScooters} scooters</li>`)
+		.map((s: StationWithStatus) => `<li><strong>${s.name}</strong>: ${s.numberOfBikes} bikes, ${s.numberOfScooters} scooters</li>`)
 		.join('');
 
-	const vehicles = data.nearby_free_vehicles.map((v: any) => `<li>${v.vehicle_type_id} — ${Math.round(v.distance)}m away</li>`).join('');
+	const vehicles = data.nearby_free_vehicles
+		.map((v: FreeFloatingVehicle) => `<li>${formatVehicleName(v)} — ${metersToMiles(v.distance)} miles away</li>`)
+		.join('');
 
 	return `
 		<h2>Beryl Tracker - Morning Snapshot</h2>

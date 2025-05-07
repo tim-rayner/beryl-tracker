@@ -19,3 +19,8 @@ export type FreeFloatingVehicle = {
 	current_range_meters: number;
 	distance: number;
 };
+
+export type NearbyVehicles = {
+	nearby_stations: StationWithStatus[];
+	nearby_free_vehicles: FreeFloatingVehicle[];
+};
