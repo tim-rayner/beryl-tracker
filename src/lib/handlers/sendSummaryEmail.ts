@@ -114,7 +114,7 @@ function formatEmail(data: NearbyVehicles): string {
 			return `
 		<li style="margin-bottom:10px;list-style:none;">
 		  <a href="${link}" target="_blank" rel="noopener noreferrer"
-			 style="color:#73d13d;text-decoration:none;display:inline-flex;align-items:center;">
+			 style="color:#b5f5ec;text-decoration:none;display:inline-flex;align-items:center;">
 			<span style="margin-right:6px;">${icon}</span> ${label}
 		  </a>
 		</li>
