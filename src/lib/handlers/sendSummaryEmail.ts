@@ -105,8 +105,8 @@ function formatEmail(data: NearbyVehicles): string {
 
 	return `
 		<div style="max-width:600px;width:100%;margin:0 auto;background-color:#ffffff;">
-		  <div style="background-color:#003B4A;padding:16px 24px;">
-		    <h1 style="color:#ffffff;font-size:24px;margin:0;">Your Beryl Snapshot</h1>
+		  <div style="background-color:#00e3c2;padding:16px 24px;">
+		    <h1 style="color:#000000;font-size:24px;margin:0;">Your Beryl Snapshot</h1>
 		  </div>
 		  <div style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;padding:24px;color:#333;font-size:16px;line-height:1.6;">
 			<p style="margin-top:0;margin-bottom:6px;">Good ${greeting},</p>
