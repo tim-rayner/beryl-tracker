@@ -70,9 +70,9 @@ function formatEmail(data: NearbyVehicles): string {
 	const hours = now.getHours();
 	let greeting = 'Hello';
 
-	if (hours < 12) greeting = 'Good morning';
-	else if (hours < 17) greeting = 'Good afternoon';
-	else greeting = 'Good evening';
+	if (hours < 12) greeting = 'morning';
+	else if (hours < 17) greeting = 'afternoon';
+	else greeting = 'evening';
 
 	const formattedDate = now.toLocaleDateString('en-GB', {
 		weekday: 'long',
@@ -109,9 +109,9 @@ function formatEmail(data: NearbyVehicles): string {
 	return `
 		<div style="max-width:600px;width:100%;margin:0 auto;">
 		  <div style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;padding:24px;background-color:#ffffff;color:#333;font-size:16px;line-height:1.5;">
-			<h1 style="color:#77C043;margin-bottom:8px;font-size:22px;">${greeting},</h1>
+			<h1 style="color:#77C043;margin-bottom:8px;font-size:22px;">Good ${greeting},</h1>
 			<p style="margin-top:0;margin-bottom:4px;">Here's your Beryl snapshot for <strong>${formattedDate}</strong>.</p>
-			<p style="margin-bottom:20px;">Let's see what's nearby this morning:</p>
+			<p style="margin-bottom:20px;">Let's see what's nearby this ${greeting}:</p>
 			${stationSection}
 			<h2 style="color:#1a1a1a;margin-bottom:4px;font-size:18px;">Free-floating Vehicles</h2>
 			<ul style="padding-left:20px;margin-top:8px;margin-bottom:24px;">${vehiclesList}</ul>
