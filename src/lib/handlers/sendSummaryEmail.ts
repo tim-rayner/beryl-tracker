@@ -114,7 +114,7 @@ function formatEmail(data: NearbyVehicles): string {
 			${stationSection}
 			<h2 style="color:#003B4A;font-size:18px;margin-bottom:6px;">Free-floating Vehicles</h2>
 			<ul style="padding-left:20px;margin-top:8px;margin-bottom:24px;">${vehiclesList}</ul>
-			<p style="font-size:0.9em;color:#999;">Powered by your custom Beryl Tracker • <a href="https://beryl-tracker-gbfs.beryl-tracker-gbfs.workers.dev/" style="color:#77C043;">Live feed</a></p>
+			<p style="font-size:0.9em;color:#999;">Powered by <a href="https://timrayner.com" style="color:#77C043;">Tim Rayner's</a> custom Beryl Tracker• <a href="https://beryl-tracker-gbfs.beryl-tracker-gbfs.workers.dev/" style="color:#77C043;">Live feed</a></p>
 		  </div>
 		</div>
 	`;
