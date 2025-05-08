@@ -4,7 +4,7 @@ import { handleStations } from './lib/handlers/stations';
 
 export default {
 	async scheduled(controller, env, ctx) {
-		await sendSummaryEmail(env, 52.6416, 1.30084);
+		await sendSummaryEmail(env, 52.6416, 1.30084, 'Norwich');
 	},
 
 	async fetch(request: Request, env: Env, ctx: ExecutionContext) {
@@ -23,7 +23,7 @@ export default {
 
 		// testing emailer
 		if (url.pathname === '/test-email') {
-			await sendSummaryEmail(env, 52.6416, 1.30084);
+			await sendSummaryEmail(env, 52.6416, 1.30084, 'Norwich');
 			return new Response('Test email sent');
 		}
 
