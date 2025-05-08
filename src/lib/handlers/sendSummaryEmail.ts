@@ -2,11 +2,11 @@
 import { FreeFloatingVehicle, NearbyVehicles, StationWithStatus } from '../../dtos/free';
 import { getNearbySnapshot } from '../functions/getNearbySnapshot';
 
-export async function sendSummaryEmail(env: Env, lat: number, lon: number): Promise<void> {
+export async function sendSummaryEmail(env: Env, lat: number, lon: number, location: string): Promise<void> {
 	let data;
 
 	try {
-		data = await getNearbySnapshot(lat, lon);
+		data = await getNearbySnapshot(lat, lon, location);
 	} catch (err) {
 		console.error('Failed to fetch GBFS data:', err);
 		return;

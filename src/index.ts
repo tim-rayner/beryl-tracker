@@ -16,7 +16,7 @@ export default {
 			return handleStations(request);
 		}
 
-		// nearme?lat=52.64163&lon=1.30084
+		// nearme?location=Norwich&lat=52.64163&lon=1.30084
 		if (path === '/nearme' || path === '/nearme/') {
 			return handleNearMe(request);
 		}
