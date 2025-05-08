@@ -68,7 +68,11 @@ function formatEmail(data: NearbyVehicles): string {
 		.join('');
 
 	const vehicles = data.nearby_free_vehicles
-		.map((v: FreeFloatingVehicle) => `<li>${formatVehicleName(v)} — ${metersToMiles(v.distance)} miles away</li>`)
+		.map((v: FreeFloatingVehicle) => {
+			const label = `${formatVehicleName(v)} — ${metersToMiles(v.distance)} miles away`;
+			const link = `https://maps.google.com/?q=${v.lat},${v.lon}`;
+			return `<li><a href="${link}" target="_blank" rel="noopener noreferrer">${label}</a></li>`;
+		})
 		.join('');
 
 	return `

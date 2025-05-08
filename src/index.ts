@@ -1,6 +1,6 @@
-import { StationStatus } from './dtos/station';
 import { handleNearMe } from './lib/handlers/nearme';
 import { sendSummaryEmail } from './lib/handlers/sendSummaryEmail';
+import { handleStations } from './lib/handlers/stations';
 
 export default {
 	async scheduled(controller, env, ctx) {
@@ -11,26 +11,9 @@ export default {
 		const url = new URL(request.url);
 		const path = url.pathname;
 
+		// /stations?location=Norwich&stationId=2100
 		if (path === '/stations' || path === '/stations/') {
-			const stationId = url.searchParams.get('stationId');
-			const gbfsUrl = 'https://beryl-gbfs-production.web.app/v2_2/Norwich/station_status.json';
-			const res = await fetch(gbfsUrl);
-			const data = await res.json();
-			const stations = data.data.stations as StationStatus[];
-
-			if (stationId) {
-				const station = stations.find((s) => s.station_id === stationId);
-				if (!station) {
-					return new Response(JSON.stringify({ error: 'Station not found' }), { status: 404 });
-				}
-				return new Response(JSON.stringify(station), {
-					headers: { 'Content-Type': 'application/json' },
-				});
-			}
-
-			return new Response(JSON.stringify(stations), {
-				headers: { 'Content-Type': 'application/json' },
-			});
+			return handleStations(request);
 		}
 
 		// nearme?lat=52.64163&lon=1.30084

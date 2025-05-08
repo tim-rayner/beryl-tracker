@@ -3,14 +3,15 @@ import { StationInformation, StationStatus } from '../../dtos/station';
 
 export async function getNearbySnapshot(
 	lat: number,
-	lon: number
+	lon: number,
+	location: string
 ): Promise<{
 	nearby_stations: ReturnType<typeof simplifyStation>[];
 	nearby_free_vehicles: FreeFloatingVehicle[];
 }> {
-	const infoUrl = 'https://beryl-gbfs-production.web.app/v2_2/Norwich/station_information.json';
-	const statusUrl = 'https://beryl-gbfs-production.web.app/v2_2/Norwich/station_status.json';
-	const freeBikesUrl = 'https://beryl-gbfs-production.web.app/v2_2/Norwich/free_bike_status.json';
+	const infoUrl = `https://beryl-gbfs-production.web.app/v2_2/${location}/station_information.json`;
+	const statusUrl = `https://beryl-gbfs-production.web.app/v2_2/${location}/station_status.json`;
+	const freeBikesUrl = `https://beryl-gbfs-production.web.app/v2_2/${location}/free_bike_status.json`;
 
 	const [infoRes, statusRes, freeBikeRes] = await Promise.all([fetch(infoUrl), fetch(statusUrl), fetch(freeBikesUrl)]);
 
@@ -98,7 +99,9 @@ function simplifyStation(station: StationInformation, status: StationStatus, dis
 
 /**
  *
- *  Using the Haversine formula to calculate the distance between two points on a sphere
+ * 📌 Why Use Haversine?
+ * The Earth is roughly a sphere, so using simple flat-Earth (Euclidean) geometry gives inaccurate results over large distances or even city-scale precision. The Haversine formula accounts for the Earth's curvature.
+ *
  */
 function haversineDistance(lat1: number, lon1: number, lat2: number, lon2: number): number {
 	const R = 6371000;
