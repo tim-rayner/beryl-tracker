@@ -101,15 +101,15 @@ function formatEmail(data: NearbyVehicles): string {
 
 	const getVehicleIcon = (type: string): string => {
 		if (type.toLowerCase().includes('scooter')) return '🛴';
-		if (type.toLowerCase().includes('electric')) return '🔋🚲';
-		if (type.toLowerCase().includes('bike')) return '🚲';
+		if (type.toLowerCase().includes('bbe')) return '🔋🚲';
+		if (type.toLowerCase().includes('bb')) return '🚲';
 		return '';
 	};
 
 	const vehiclesList = nearby_free_vehicles
 		.map((v: FreeFloatingVehicle) => {
 			const icon = getVehicleIcon(v.vehicle_type_id);
-			const label = `${formatVehicleName(v)} – ${metersToMiles(v.distance)} miles away`;
+			const label = `${formatVehicleName(v)} - ${metersToMiles(v.distance)} miles away`;
 			const link = `https://maps.google.com/?q=${v.lat},${v.lon}`;
 			return `
 		<li style="margin-bottom:10px;list-style:none;">
