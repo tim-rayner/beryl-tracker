@@ -100,8 +100,8 @@ function formatEmail(data: NearbyVehicles): string {
 	`;
 
 	const getVehicleIcon = (type: string): string => {
-		if (type.toLowerCase().includes('scooter')) return '🔋🛴';
-		if (type.toLowerCase().includes('bbe')) return '🔋🚲';
+		if (type.toLowerCase().includes('scooter')) return '🛴';
+		if (type.toLowerCase().includes('bbe')) return '🚲';
 		if (type.toLowerCase().includes('bb')) return '🚲';
 		return '';
 	};
