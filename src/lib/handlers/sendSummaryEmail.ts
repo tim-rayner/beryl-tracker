@@ -65,11 +65,9 @@ const metersToMiles = (meters: number) => {
 function formatEmail(data: NearbyVehicles): string {
 	const { nearby_stations, nearby_free_vehicles } = data;
 
-	// Determine greeting based on current UK time
 	const now = new Date(new Date().toLocaleString('en-GB', { timeZone: 'Europe/London' }));
 	const hours = now.getHours();
 	let greeting = 'Hello';
-
 	if (hours < 12) greeting = 'morning';
 	else if (hours < 17) greeting = 'afternoon';
 	else greeting = 'evening';
@@ -81,7 +79,6 @@ function formatEmail(data: NearbyVehicles): string {
 		year: 'numeric',
 	});
 
-	// Sort and select primary station
 	const sortedStations = [...nearby_stations].sort((a, b) => a.distance - b.distance);
 	let primaryStation = sortedStations[0];
 	if (primaryStation.numberOfScooters === 0) {
@@ -90,10 +87,10 @@ function formatEmail(data: NearbyVehicles): string {
 	}
 
 	const stationSection = `
-		<h2 style="color:#1a1a1a;margin-bottom:4px;">Closest Station</h2>
-		<div style="background:#f2f2f2;padding:12px;border-radius:8px;margin-bottom:16px;">
-			<strong>${primaryStation.name}</strong><br/>
-			${primaryStation.numberOfBikes} bikes &bull; ${primaryStation.numberOfScooters} scooters<br/>
+		<h2 style="color:#003B4A;font-size:18px;margin-bottom:6px;">Closest Station</h2>
+		<div style="background:#F9FAF8;padding:14px;border-radius:10px;margin-bottom:20px;border:1px solid #E0E0E0;">
+			<strong style="font-size:16px;">${primaryStation.name}</strong><br/>
+			<span style="color:#333;">${primaryStation.numberOfBikes} bikes &bull; ${primaryStation.numberOfScooters} scooters</span><br/>
 			<span style="font-size:0.9em;color:#777;">${metersToMiles(primaryStation.distance)} miles away</span>
 		</div>
 	`;
@@ -102,21 +99,23 @@ function formatEmail(data: NearbyVehicles): string {
 		.map((v: FreeFloatingVehicle) => {
 			const label = `${formatVehicleName(v)} – ${metersToMiles(v.distance)} miles away`;
 			const link = `https://maps.google.com/?q=${v.lat},${v.lon}`;
-			return `<li style="margin-bottom:6px;"><a href="${link}" target="_blank" rel="noopener noreferrer" style="color:#77C043;text-decoration:none;">${label}</a></li>`;
+			return `<li style="margin-bottom:8px;"><a href="${link}" target="_blank" rel="noopener noreferrer" style="color:#77C043;text-decoration:none;">${label}</a></li>`;
 		})
 		.join('');
 
 	return `
-		<div style="max-width:600px;width:100%;margin:0 auto;">
-		  <div style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;padding:24px;background-color:#ffffff;color:#333;font-size:16px;line-height:1.5;">
-			<h1 style="color:#77C043;margin-bottom:8px;font-size:22px;">Good ${greeting},</h1>
-			<p style="margin-top:0;margin-bottom:4px;">Here's your Beryl snapshot for <strong>${formattedDate}</strong>.</p>
-			<p style="margin-bottom:20px;">Let's see what's nearby this ${greeting}:</p>
+		<div style="max-width:600px;width:100%;margin:0 auto;background-color:#ffffff;">
+		  <div style="background-color:#003B4A;padding:16px 24px;">
+		    <h1 style="color:#ffffff;font-size:24px;margin:0;">Your Beryl Snapshot</h1>
+		  </div>
+		  <div style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;padding:24px;color:#333;font-size:16px;line-height:1.6;">
+			<p style="margin-top:0;margin-bottom:6px;">Good ${greeting},</p>
+			<p style="margin:0 0 20px;">Here's your Beryl snapshot for <strong>${formattedDate}</strong>. Let's see what's nearby this ${greeting}:</p>
 			${stationSection}
-			<h2 style="color:#1a1a1a;margin-bottom:4px;font-size:18px;">Free-floating Vehicles</h2>
+			<h2 style="color:#003B4A;font-size:18px;margin-bottom:6px;">Free-floating Vehicles</h2>
 			<ul style="padding-left:20px;margin-top:8px;margin-bottom:24px;">${vehiclesList}</ul>
 			<p style="font-size:0.9em;color:#999;">Powered by your custom Beryl Tracker • <a href="https://beryl-tracker-gbfs.beryl-tracker-gbfs.workers.dev/" style="color:#77C043;">Live feed</a></p>
 		  </div>
 		</div>
-	  `;
+	`;
 }
