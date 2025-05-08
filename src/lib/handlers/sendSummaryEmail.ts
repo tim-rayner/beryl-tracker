@@ -86,35 +86,57 @@ function formatEmail(data: NearbyVehicles): string {
 		if (fallback) primaryStation = fallback;
 	}
 
+	const bikesColor = primaryStation.numberOfBikes === 0 ? '#ff4d4f' : '#73d13d';
+	const scootersColor = primaryStation.numberOfScooters === 0 ? '#ff4d4f' : '#73d13d';
+
 	const stationSection = `
-		<h2 style="color:#003B4A;font-size:18px;margin-bottom:10px;">Closest Station</h2>
-		<div style="background:#F9FAF8;padding:16px;border-radius:10px;margin-bottom:24px;border:1px solid #E0E0E0;">
-			<strong style="font-size:16px;">${primaryStation.name}</strong><br/>
-			<span style="color:#333;">${primaryStation.numberOfBikes} bikes &bull; ${primaryStation.numberOfScooters} scooters</span><br/>
-			<span style="font-size:0.9em;color:#777;">${metersToMiles(primaryStation.distance)} miles away</span>
+		<h2 style="color:#b5f5ec;font-size:18px;margin-bottom:10px;">Closest Station</h2>
+		<div style="background:#2b2b2b;padding:16px;border-radius:10px;margin-bottom:24px;border:1px solid #555;">
+			<strong style="font-size:16px;color:#fff;">${primaryStation.name}</strong><br/>
+			<span style="color:${bikesColor};">${primaryStation.numberOfBikes} bikes</span> &bull; 
+			<span style="color:${scootersColor};">${primaryStation.numberOfScooters} scooters</span><br/>
+			<span style="font-size:0.9em;color:#aaa;">${metersToMiles(primaryStation.distance)} miles away</span>
 		</div>
 	`;
 
+	const getVehicleIcon = (type: string): string => {
+		if (type.toLowerCase().includes('scooter')) return '🛴';
+		if (type.toLowerCase().includes('electric')) return '🔋🚲';
+		if (type.toLowerCase().includes('bike')) return '🚲';
+		return '';
+	};
+
 	const vehiclesList = nearby_free_vehicles
 		.map((v: FreeFloatingVehicle) => {
+			const icon = getVehicleIcon(v.vehicle_type_id);
 			const label = `${formatVehicleName(v)} – ${metersToMiles(v.distance)} miles away`;
 			const link = `https://maps.google.com/?q=${v.lat},${v.lon}`;
-			return `<li style="margin-bottom:10px;"><a href="${link}" target="_blank" rel="noopener noreferrer" style="color:#77C043;text-decoration:none;">${label}</a></li>`;
+			return `
+		<li style="margin-bottom:10px;list-style:none;">
+		  <a href="${link}" target="_blank" rel="noopener noreferrer"
+			 style="color:#73d13d;text-decoration:none;display:inline-flex;align-items:center;">
+			<span style="margin-right:6px;">${icon}</span> ${label}
+		  </a>
+		</li>
+	  `;
 		})
 		.join('');
 
 	return `
-		<div style="max-width:600px;width:100%;margin:0 auto;background-color:#ffffff;">
-		  <div style="background-color:#00e3c2;padding:20px 24px;">
-		    <h1 style="color:#003B4A;font-size:24px;margin:0;">Your Beryl Snapshot</h1>
+		<div style="max-width:600px;width:100%;margin:0 auto;background-color:#1a1a1a;">
+		  <div style="background-color:#007c65;padding:20px 24px;">
+		    <h1 style="color:#ffffff;font-size:24px;margin:0;">Your Beryl Snapshot</h1>
 		  </div>
-		  <div style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;padding:24px;color:#333;font-size:16px;line-height:1.6;">
-			<p style="margin-top:0;margin-bottom:8px;">Good ${greeting},</p>
-			<p style="margin:0 0 24px;">Here's your Beryl snapshot for <strong>${formattedDate}</strong>. Let’s see what’s nearby this ${greeting}:</p>
+		  <div style="font-family:-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;padding:24px;color:#fff;font-size:16px;line-height:1.6;">
+			<p style="margin-top:0;margin-bottom:8px;color:#ffffff;">Good ${greeting},</p>
+			<p style="margin:0 0 24px;color:#ffffff;">
+			  Here's your Beryl snapshot for <strong style="color:#ffffff;">${formattedDate}</strong>. 
+			  Let's see what's nearby this ${greeting}:
+			</p>
 			${stationSection}
-			<h2 style="color:#003B4A;font-size:18px;margin-bottom:10px;">Free-floating Vehicles</h2>
+			<h2 style="color:#b5f5ec;font-size:18px;margin-bottom:10px;">Free-floating Vehicles</h2>
 			<ul style="padding-left:20px;margin-top:8px;margin-bottom:24px;">${vehiclesList}</ul>
-			<p style="font-size:0.9em;color:#999;">Powered by <a href="https://timrayner.com" style="color:#77C043;text-decoration:none;">Tim Rayner’s</a> custom Beryl Tracker • <a href="https://beryl-tracker-gbfs.beryl-tracker-gbfs.workers.dev/" style="color:#77C043;text-decoration:none;">Live feed</a></p>
+			<p style="font-size:0.9em;color:#888;">Powered by <a href="https://timrayner.com" style="color:#69c0ff;text-decoration:none;">Tim Rayner’s</a> custom Beryl Tracker • <a href="https://beryl-tracker-gbfs.beryl-tracker-gbfs.workers.dev/" style="color:#69c0ff;text-decoration:none;">Live feed</a></p>
 		  </div>
 		</div>
 	`;
