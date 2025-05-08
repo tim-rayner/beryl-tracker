@@ -22,7 +22,7 @@ export async function sendSummaryEmail(env: Env, lat: number, lon: number, locat
 				'Content-Type': 'application/json',
 			},
 			body: JSON.stringify({
-				from: 'onboarding@resend.dev',
+				from: 'beryl-tracker@timrayner.com',
 				to: 'tim.rayner2020@gmail.com',
 				subject: 'Your Morning Beryl Snapshot',
 				html,
